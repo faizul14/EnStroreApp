@@ -9,12 +9,12 @@ object DataMapper {
         input.map {
             val data = ProductModel(
                 id = it.id,
-                nameProduct = it.nameProduct,
-                kodeProduct = it.kodeProduct,
-                entityProduct = it.entityProduct,
-                expiredProduct = it.expiredProduct,
-                priceProduct = it.priceProduct,
-                imageProduct = it.imageProduct,
+                nameProduct = it.nameproduct,
+                kodeProduct = it.kodeproduct,
+                entityProduct = it.entityproduct,
+                expiredProduct = it.expiredproduct,
+                priceProduct = it.priceproduct,
+                imageProduct = it.imageproduct,
             )
             dataResult.add(data)
         }
@@ -24,24 +24,24 @@ object DataMapper {
     fun mapperFromEntityToModel(input: ProductEntity): ProductModel{
             return ProductModel(
                 id = input.id,
-                nameProduct = input.nameProduct,
-                kodeProduct = input.kodeProduct,
-                entityProduct = input.entityProduct,
-                expiredProduct = input.expiredProduct,
-                priceProduct = input.priceProduct,
-                imageProduct = input.imageProduct,
+                nameProduct = input.nameproduct,
+                kodeProduct = input.kodeproduct,
+                entityProduct = input.entityproduct,
+                expiredProduct = input.expiredproduct,
+                priceProduct = input.priceproduct,
+                imageProduct = input.imageproduct,
             )
     }
 
     fun mapperFromModelToEntity(input: ProductModel): ProductEntity {
         return ProductEntity(
             id = input.id,
-            nameProduct = input.nameProduct,
-            kodeProduct = input.kodeProduct,
-            entityProduct = input.entityProduct,
-            expiredProduct = input.expiredProduct,
-            priceProduct = input.priceProduct,
-            imageProduct = input.imageProduct,
+            nameproduct = input.nameProduct,
+            kodeproduct = input.kodeProduct,
+            entityproduct = input.entityProduct,
+            expiredproduct = input.expiredProduct,
+            priceproduct = input.priceProduct,
+            imageproduct = input.imageProduct,
         )
     }
 
