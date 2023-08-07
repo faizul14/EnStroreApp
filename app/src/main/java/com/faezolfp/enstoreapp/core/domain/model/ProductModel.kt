@@ -1,7 +1,9 @@
 package com.faezolfp.enstoreapp.core.domain.model
 
+import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.PrimaryKey
+import kotlinx.parcelize.Parcelize
 
 data class ProductModel(
     val id: Int = 0,
