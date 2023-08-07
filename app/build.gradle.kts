@@ -67,4 +67,8 @@ dependencies {
     implementation ("androidx.camera:camera-camera2:1.2.2")
     implementation ("androidx.camera:camera-lifecycle:1.2.2")
     implementation ("androidx.camera:camera-view:1.2.2")
+
+    //Qr
+    implementation ("com.github.yuriy-budiyev:code-scanner:2.3.2")
+
 }

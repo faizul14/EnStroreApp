@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-
     <uses-feature android:name="android.hardware.camera" />
+
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
@@ -17,6 +17,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EnStoreApp"
         tools:targetApi="31">
+        <activity
+            android:name=".scanqr.QrScanActivity"
+            android:exported="false" />
         <activity
             android:name=".camerax.Cameractivity"
             android:exported="false" />

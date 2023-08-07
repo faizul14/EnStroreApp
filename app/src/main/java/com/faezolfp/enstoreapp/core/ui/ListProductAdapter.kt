@@ -1,8 +1,11 @@
 package com.faezolfp.enstoreapp.core.ui
 
+import android.content.res.Resources
+import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.faezolfp.enstoreapp.R
 import com.faezolfp.enstoreapp.core.domain.model.ProductModel
 import com.faezolfp.enstoreapp.databinding.ItemListProductBinding
 
@@ -23,11 +26,13 @@ class ListProductAdapter : RecyclerView.Adapter<ListProductAdapter.ViewHolder>()
                 txtProductquantity.text = data.entityProduct.toString()
                 txtProductprice.text = data.priceProduct
                 txtProductexpireddate.text = data.expiredProduct
-
-                itemView.setOnClickListener{
-
+                if (data.imageProduct.equals("path://default") || data.imageProduct.equals("local image//:dkdk")) {
+                    imageView.setImageResource(R.drawable.img_qr)
+                }else{
+                    imageView.setImageBitmap(BitmapFactory.decodeFile(data.imageProduct))
                 }
             }
+
         }
     }
 
