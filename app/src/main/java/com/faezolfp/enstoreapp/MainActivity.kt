@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import com.faezolfp.enstoreapp.additem.AddItemActivity
+import com.faezolfp.enstoreapp.camerax.Cameractivity
 import com.faezolfp.enstoreapp.home.HomeActivity
 import dagger.hilt.android.AndroidEntryPoint
 

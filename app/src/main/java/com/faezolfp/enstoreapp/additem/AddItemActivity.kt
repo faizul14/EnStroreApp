@@ -1,14 +1,23 @@
 package com.faezolfp.enstoreapp.additem
 
+import android.content.Intent
+import android.graphics.BitmapFactory
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.faezolfp.enstoreapp.R
+import com.faezolfp.enstoreapp.camerax.Cameractivity
+import com.faezolfp.enstoreapp.camerax.Cameractivity.Companion.CAMERA_X_RESULT
 import com.faezolfp.enstoreapp.core.domain.model.ProductModel
+import com.faezolfp.enstoreapp.core.utils.DataMapper.rotateFile
 import com.faezolfp.enstoreapp.databinding.ActivityAddItemBinding
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.File
 
 @AndroidEntryPoint
 class AddItemActivity : AppCompatActivity(), View.OnClickListener {
@@ -17,6 +26,8 @@ class AddItemActivity : AppCompatActivity(), View.OnClickListener {
             layoutInflater
         )
     }
+    private var NameProduct: String? = null
+    private var dataPathImgProduct: String? = null
     private val viewModel: AddItemViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +39,7 @@ class AddItemActivity : AppCompatActivity(), View.OnClickListener {
     private fun displayButton() {
         binding.btnBack.setOnClickListener(this)
         binding.btnSave.setOnClickListener(this)
+        binding.btnStartCamera.setOnClickListener(this)
     }
 
     private fun displaySave() {
@@ -36,7 +48,6 @@ class AddItemActivity : AppCompatActivity(), View.OnClickListener {
         var entityProduct: String? = null
         var expiredProduct: String? = null
         var priceProduct: String? = null
-        var imageProduct: String? = null
         binding.apply {
             nameProduct = edtProductName.text.toString()
             kodeProduct = edtIdProduct.text.toString()
@@ -44,25 +55,51 @@ class AddItemActivity : AppCompatActivity(), View.OnClickListener {
             expiredProduct = edtDateExpired.text.toString()
             priceProduct = if (edtTotalPrice.text.toString() != "") {
                 "${
-                    edtTotalPrice.text.toString().toInt() / edtQuantityProduct.text.toString().toInt()
+                    edtTotalPrice.text.toString().toInt() / edtQuantityProduct.text.toString()
+                        .toInt()
                 }"
             } else {
                 edtPrice.text.toString()
             }
-            imageProduct = "local image//:dkdk"
         }
-        val data = ProductModel(
-            id = 0,
-            nameProduct = nameProduct,
-            kodeProduct = kodeProduct,
-            entityProduct = entityProduct?.toInt(),
-            expiredProduct = expiredProduct,
-            priceProduct = priceProduct,
-            imageProduct = imageProduct
-        )
-        viewModel.saveProduct(data)
-        Toast.makeText(this, "Item berhasil di tambahkan!", Toast.LENGTH_SHORT).show()
-        finish()
+        val validatePrice: Boolean =
+            binding.edtTotalPrice.text.toString() != "" || binding.edtPrice.text.toString() != ""
+
+        if (nameProduct != null && kodeProduct != null && entityProduct != null && validatePrice) {
+            val data = ProductModel(
+                id = 0,
+                nameProduct = nameProduct,
+                kodeProduct = kodeProduct,
+                entityProduct = entityProduct?.toInt(),
+                expiredProduct = expiredProduct,
+                priceProduct = priceProduct,
+                imageProduct = dataPathImgProduct ?: "path://default"
+            )
+            viewModel.saveProduct(data)
+            Toast.makeText(this, "Item berhasil di tambahkan!", Toast.LENGTH_SHORT).show()
+            finish()
+        } else {
+            Toast.makeText(this, "minimal isi dulu Bos!", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    //Get Picrure
+    private val launcherIntentCameraX = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
+        if (it.resultCode == CAMERA_X_RESULT) {
+            val myFile = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                it.data?.getSerializableExtra("picture", File::class.java)
+            } else {
+                @Suppress("DEPRECATION") it.data?.getSerializableExtra("picture")
+            } as? File
+            val isBackCamera = it.data?.getBooleanExtra("isBackCamera", true) as Boolean
+            myFile?.let { file ->
+                rotateFile(file, isBackCamera)
+                binding.imgProduct.setImageBitmap(BitmapFactory.decodeFile(file.path))
+                dataPathImgProduct = file.path
+            }
+        }
     }
 
     override fun onClick(p0: View?) {
@@ -75,10 +112,20 @@ class AddItemActivity : AppCompatActivity(), View.OnClickListener {
                 displaySave()
             }
 
+            R.id.btn_startCamera -> {
+                NameProduct = binding.edtProductName.text.toString()
+                if (NameProduct != null && NameProduct != "") {
+                    val intent = Intent(this, Cameractivity::class.java)
+                    intent.putExtra(Cameractivity.NAME_PRODUCT, NameProduct)
+                    launcherIntentCameraX.launch(intent)
+                } else {
+                    Toast.makeText(this, "Minilmal isi nama Bos!", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
-    companion object{
+    companion object {
         const val DATA_PRODUCT = "data_product"
         const val STATE = 0
     }
