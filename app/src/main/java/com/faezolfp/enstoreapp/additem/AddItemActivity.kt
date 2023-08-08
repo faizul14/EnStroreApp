@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.faezolfp.enstoreapp.R
 import com.faezolfp.enstoreapp.camerax.Cameractivity
@@ -15,6 +16,8 @@ import com.faezolfp.enstoreapp.camerax.Cameractivity.Companion.CAMERA_X_RESULT
 import com.faezolfp.enstoreapp.core.domain.model.ProductModel
 import com.faezolfp.enstoreapp.core.utils.DataMapper.rotateFile
 import com.faezolfp.enstoreapp.databinding.ActivityAddItemBinding
+import com.faezolfp.enstoreapp.scanqr.QrScanActivity
+import com.faezolfp.enstoreapp.scanqr.QrScanActivity.Companion.PRODUCTID_RESULT
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 
@@ -27,6 +30,7 @@ class AddItemActivity : AppCompatActivity(), View.OnClickListener {
     }
     private var NameProduct: String? = null
     private var dataPathImgProduct: String? = null
+    private var kodeProduct: String? = null
     private val viewModel: AddItemViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +43,7 @@ class AddItemActivity : AppCompatActivity(), View.OnClickListener {
         binding.btnBack.setOnClickListener(this)
         binding.btnSave.setOnClickListener(this)
         binding.btnStartCamera.setOnClickListener(this)
+        binding.btnGetkodeproductwithqr.setOnClickListener(this)
     }
 
     private fun displaySave() {
@@ -101,6 +106,15 @@ class AddItemActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    private val luncherIntentKodeProduct = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ){
+        if (it.resultCode == PRODUCTID_RESULT){
+            kodeProduct = @Suppress("DEPRECATION") it.data?.getStringExtra("kodeproduct").toString()
+            binding.edtIdProduct.setText(kodeProduct)
+        }
+    }
+
     override fun onClick(p0: View?) {
         when (p0?.id) {
             R.id.btn_back -> {
@@ -120,6 +134,10 @@ class AddItemActivity : AppCompatActivity(), View.OnClickListener {
                 } else {
                     Toast.makeText(this, "Minilmal isi nama Bos!", Toast.LENGTH_SHORT).show()
                 }
+            }
+            R.id.btn_getkodeproductwithqr ->{
+                val intentResult = Intent(this, QrScanActivity::class.java)
+                luncherIntentKodeProduct.launch(intentResult)
             }
         }
     }

@@ -109,7 +109,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="80dp"
             android:hint="ProductID"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline7"
@@ -122,6 +122,17 @@
                 android:hint="ProductID"
                 android:inputType="number" />
         </com.google.android.material.textfield.TextInputLayout>
+
+
+        <ImageView
+            android:id="@+id/btn_getkodeproductwithqr"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/baseline_qr_code_scanner_24"
+            app:layout_constraintBottom_toBottomOf="@+id/textInputLayout3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/textInputLayout3" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textInputLayout4"

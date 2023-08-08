@@ -1,6 +1,7 @@
 package com.faezolfp.enstoreapp.scanqr
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -8,6 +9,7 @@ import android.os.Bundle
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.camera.core.CameraSelector
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.budiyev.android.codescanner.AutoFocusMode
@@ -31,6 +33,13 @@ class QrScanActivity : AppCompatActivity() {
         displayScanner()
         //start scanner
         codeScanner.startPreview()
+    }
+
+    private fun dataResult(kodeProduct: String) {
+        val intent = Intent()
+        intent.putExtra("kodeproduct", kodeProduct)
+        setResult(PRODUCTID_RESULT, intent)
+        finish()
     }
 
     private fun getPermision() {
@@ -73,6 +82,7 @@ class QrScanActivity : AppCompatActivity() {
         codeScanner.decodeCallback = DecodeCallback {
             runOnUiThread {
                 Toast.makeText(this, "Scan result: ${it.text}", Toast.LENGTH_LONG).show()
+                dataResult(it.text)
             }
         }
         codeScanner.errorCallback = ErrorCallback { // or ErrorCallback.SUPPRESS
@@ -113,6 +123,7 @@ class QrScanActivity : AppCompatActivity() {
     }
 
     companion object {
+        const val PRODUCTID_RESULT = 200
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
         private const val REQUEST_CODE_PERMISSIONS = 10
     }
