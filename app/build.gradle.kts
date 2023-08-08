@@ -39,7 +39,6 @@ android {
     buildFeatures{
         viewBinding = true
     }
-
 }
 
 dependencies {
@@ -70,5 +69,9 @@ dependencies {
 
     //Qr
     implementation ("com.github.yuriy-budiyev:code-scanner:2.3.2")
+
+    //lotie
+    implementation ("com.airbnb.android:lottie:3.4.1")
+
 
 }
