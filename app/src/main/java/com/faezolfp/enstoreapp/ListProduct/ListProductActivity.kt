@@ -1,15 +1,20 @@
 package com.faezolfp.enstoreapp.ListProduct
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.faezolfp.enstoreapp.additem.AddItemActivity
 import com.faezolfp.enstoreapp.core.ui.ListProductAdapter
 import com.faezolfp.enstoreapp.databinding.ActivityListProductBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ListProductActivity : AppCompatActivity() {
@@ -32,17 +37,18 @@ class ListProductActivity : AppCompatActivity() {
         displayCase(getByIntentIsForSearch)
     }
 
-    fun displayCase(isSearch: Boolean){
+    fun displayCase(isSearch: Boolean) {
         binding.apply {
-            txtTopBar.setText("List Item")
+            txtTopBar.text = "List Item"
             bottomView.visibility = View.VISIBLE
-            when(isSearch){
-                true ->{
-                    txtTopBar.setText("Item")
+            when (isSearch) {
+                true -> {
+                    txtTopBar.text = "Item"
                     bottomView.visibility = View.GONE
                 }
-                else ->{
-                    txtTopBar.setText("List Item")
+
+                else -> {
+                    txtTopBar.text = "List Item"
                     bottomView.visibility = View.VISIBLE
                 }
             }
@@ -57,6 +63,22 @@ class ListProductActivity : AppCompatActivity() {
             btnBack.setOnClickListener {
                 finish()
             }
+            edtProductName.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                }
+
+                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                    lifecycleScope.launch {
+                        viewModel.queryChannel.value = p0.toString()
+                    }
+                    Toast.makeText(this@ListProductActivity, p0.toString(), Toast.LENGTH_SHORT)
+                        .show()
+                }
+
+                override fun afterTextChanged(p0: Editable?) {
+                }
+
+            })
         }
     }
 
@@ -66,6 +88,20 @@ class ListProductActivity : AppCompatActivity() {
             adapter.setListProduct(dataProduct)
             binding.rvListProduct.adapter = adapter
 
+        }
+        viewModel.trackTextChange2.observe(this) { trackText ->
+            if (!trackText.equals("")) {
+                viewModel.listProduct(false, null, trackText).observe(this) { dataAfterSearch ->
+                    adapter.setListProduct(dataAfterSearch)
+                    binding.rvListProduct.adapter = adapter
+                }
+            } else {
+                viewModel.listProduct(isByCodePeoduct, CodeProduct).observe(this) { dataProduct ->
+                    adapter.setListProduct(dataProduct)
+                    binding.rvListProduct.adapter = adapter
+
+                }
+            }
         }
     }
 

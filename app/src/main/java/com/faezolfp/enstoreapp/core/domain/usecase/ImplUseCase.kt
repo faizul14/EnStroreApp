@@ -11,12 +11,27 @@ class ImplUseCase @Inject constructor(private val repository: Repository) : UseC
     }
 
     override fun getListDataProduct(
-        isByCodePeoduct: Boolean, CodeProduct: String?
-    ): LiveData<List<ProductModel>> = if (isByCodePeoduct && CodeProduct != null) {
-        repository.getDataProductByKodeProduct(CodeProduct)
-    } else {
-        repository.getListDataProduct()
+        isByCodePeoduct: Boolean,
+        CodeProduct: String?,
+        nameProduct: String?
+    ): LiveData<List<ProductModel>> = when {
+        isByCodePeoduct && CodeProduct != null -> {
+            repository.getDataProductByKodeProduct(CodeProduct)
+        }
+        nameProduct != null -> {
+            repository.getDataProductByNameProduct(nameProduct)
+        }
+        else -> {
+            repository.getListDataProduct()
+        }
     }
+
+    //    if (isByCodePeoduct && CodeProduct != null) {
+//        repository.getDataProductByKodeProduct(CodeProduct)
+//    }
+//    else {
+//        repository.getListDataProduct()
+//    }
     override fun addProduct(product: ProductModel) {
         repository.addProduct(product)
     }

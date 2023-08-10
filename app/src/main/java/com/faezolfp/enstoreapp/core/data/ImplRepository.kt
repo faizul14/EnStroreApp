@@ -40,4 +40,10 @@ class ImplRepository @Inject constructor(private val localDataSource: LocalDataS
         }
     }
 
+    override fun getDataProductByNameProduct(name: String): LiveData<List<ProductModel>> {
+        return Transformations.map(localDataSource.getDataProductByNameProduct(name)){
+            DataMapper.mapperListFromEntityToModel(it)
+        }
+    }
+
 }

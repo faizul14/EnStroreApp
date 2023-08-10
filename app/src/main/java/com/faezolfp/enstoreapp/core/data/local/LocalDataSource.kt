@@ -15,23 +15,10 @@ class LocalDataSource @Inject constructor(private val enstoreDao: EnstoreDao) {
     fun getListDataProduct(): LiveData<List<ProductEntity>> = enstoreDao.getListProduct()
     fun addProduct(product: ProductEntity) =
         executorService.execute { enstoreDao.addProduct(product) }
-
     fun updateProduct(product: ProductEntity) =
         executorService.execute { enstoreDao.updateProduct(product) }
-
     fun deleteProduct(product: ProductEntity) =
         executorService.execute { enstoreDao.deleteProduct(product) }
-
-//    fun getDataProductByKodeProduct(kode: String): LiveData<ProductEntity> {
-//        val liveData = MutableLiveData<ProductEntity>()
-//
-//        executorService.execute {
-//            val productEntity = enstoreDao.getProductByKodeProduct(kode)
-//            liveData.postValue(productEntity)
-//        }
-//
-//        return liveData
-//    }
-
     fun getDataProductByKodeProduct(kode: String) = enstoreDao.getProductByKodeProduct(kode)
+    fun getDataProductByNameProduct(name: String) = enstoreDao.getProductByNameProduct("%$name%")
 }
