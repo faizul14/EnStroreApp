@@ -10,5 +10,5 @@ interface Repository {
     fun addProduct(product: ProductModel)
     fun updateProduct(product: ProductModel)
     fun deleteProduct(product: ProductModel)
-    fun getDataProductByKodeProduct(kode: String): ProductModel
+    fun getDataProductByKodeProduct(kode: String): LiveData<List<ProductModel>>
 }

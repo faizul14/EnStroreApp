@@ -25,5 +25,8 @@ interface EnstoreDao {
     fun getListProduct(): LiveData<List<ProductEntity>>
 
     @Query("SELECT * FROM productentity WHERE kodeProduct = :kode")
-    fun getProductByKodeProduct(kode: String): ProductEntity
+    fun getProductByKodeProduct(kode: String): LiveData<List<ProductEntity>>
+
+    @Query("SELECT * FROM productentity WHERE nameproduct LIKE :name")
+    fun  getProductByNameProduct(name: String): LiveData<List<ProductEntity>>
 }

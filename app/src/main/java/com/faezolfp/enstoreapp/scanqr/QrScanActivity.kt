@@ -17,6 +17,7 @@ import com.budiyev.android.codescanner.CodeScanner
 import com.budiyev.android.codescanner.DecodeCallback
 import com.budiyev.android.codescanner.ErrorCallback
 import com.budiyev.android.codescanner.ScanMode
+import com.faezolfp.enstoreapp.ListProduct.ListProductActivity
 import com.faezolfp.enstoreapp.databinding.ActivityQrScanBinding
 
 class QrScanActivity : AppCompatActivity() {
@@ -29,17 +30,31 @@ class QrScanActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        val getDataIntent: Boolean = intent.getBooleanExtra(IS_FOR_SEARCH, false)
+
         getPermision()
-        displayScanner()
+        displayScanner(getDataIntent)
         //start scanner
         codeScanner.startPreview()
+        binding.btnSave.setOnClickListener{
+            dataResult(true, "8977689")
+        }
     }
 
-    private fun dataResult(kodeProduct: String) {
-        val intent = Intent()
-        intent.putExtra("kodeproduct", kodeProduct)
-        setResult(PRODUCTID_RESULT, intent)
-        finish()
+    private fun dataResult(isForSearch: Boolean, kodeProduct: String) {
+        if (isForSearch){
+            val moveToSearch = Intent(this, ListProductActivity::class.java)
+            moveToSearch.putExtra(ListProductActivity.KODE_PRODUCT, kodeProduct)
+            moveToSearch.putExtra(ListProductActivity.SEARCH_BY_KODE, true)
+            startActivity(moveToSearch)
+            finish()
+        }else{
+            val intent = Intent()
+            intent.putExtra("kodeproduct", kodeProduct)
+            setResult(PRODUCTID_RESULT, intent)
+            finish()
+        }
     }
 
     private fun getPermision() {
@@ -66,7 +81,7 @@ class QrScanActivity : AppCompatActivity() {
         ContextCompat.checkSelfPermission(baseContext, it) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun displayScanner() {
+    private fun displayScanner(isForSearch: Boolean) {
         codeScanner = CodeScanner(this, binding.scannerView)
 
         // Parameters (default values)
@@ -82,7 +97,7 @@ class QrScanActivity : AppCompatActivity() {
         codeScanner.decodeCallback = DecodeCallback {
             runOnUiThread {
                 Toast.makeText(this, "Scan result: ${it.text}", Toast.LENGTH_LONG).show()
-                dataResult(it.text)
+                dataResult(isForSearch, it.text)
             }
         }
         codeScanner.errorCallback = ErrorCallback { // or ErrorCallback.SUPPRESS
@@ -126,6 +141,7 @@ class QrScanActivity : AppCompatActivity() {
         const val PRODUCTID_RESULT = 200
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
         private const val REQUEST_CODE_PERMISSIONS = 10
+        const val IS_FOR_SEARCH = "is_for_sarch"
     }
 
 }

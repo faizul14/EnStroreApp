@@ -34,8 +34,10 @@ class ImplRepository @Inject constructor(private val localDataSource: LocalDataS
         localDataSource.deleteProduct(DataMapper.mapperFromModelToEntity(product))
     }
 
-    override fun getDataProductByKodeProduct(kode: String): ProductModel {
-        return DataMapper.mapperFromEntityToModel(localDataSource.getDataProductByKodeProduct(kode))
+    override fun getDataProductByKodeProduct(kode: String): LiveData<List<ProductModel>> {
+        return Transformations.map(localDataSource.getDataProductByKodeProduct(kode)) {
+            DataMapper.mapperListFromEntityToModel(it)
+        }
     }
 
 }

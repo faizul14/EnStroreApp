@@ -5,15 +5,18 @@ import com.faezolfp.enstoreapp.core.domain.model.ProductModel
 import com.faezolfp.enstoreapp.core.domain.repository.Repository
 import javax.inject.Inject
 
-class ImplUseCase @Inject constructor(private val repository: Repository): UseCase {
+class ImplUseCase @Inject constructor(private val repository: Repository) : UseCase {
     override fun example() {
         repository.example()
     }
 
-    override fun getListDataProduct(): LiveData<List<ProductModel>> {
-        return repository.getListDataProduct()
+    override fun getListDataProduct(
+        isByCodePeoduct: Boolean, CodeProduct: String?
+    ): LiveData<List<ProductModel>> = if (isByCodePeoduct && CodeProduct != null) {
+        repository.getDataProductByKodeProduct(CodeProduct)
+    } else {
+        repository.getListDataProduct()
     }
-
     override fun addProduct(product: ProductModel) {
         repository.addProduct(product)
     }
@@ -26,7 +29,4 @@ class ImplUseCase @Inject constructor(private val repository: Repository): UseCa
         repository.deleteProduct(product)
     }
 
-    override fun getDataProductByKodeProduct(kode: String): ProductModel {
-        return repository.getDataProductByKodeProduct(kode)
-    }
 }

@@ -7,5 +7,5 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(private val useCase: UseCase): ViewModel() {
-    val data = useCase.getListDataProduct()
+//    val data = useCase.getListDataProduct()
 }

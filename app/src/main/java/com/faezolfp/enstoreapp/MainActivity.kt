@@ -1,14 +1,10 @@
 package com.faezolfp.enstoreapp
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.viewModels
-import com.faezolfp.enstoreapp.additem.AddItemActivity
-import com.faezolfp.enstoreapp.camerax.Cameractivity
+import androidx.appcompat.app.AppCompatActivity
 import com.faezolfp.enstoreapp.home.HomeActivity
-import com.faezolfp.enstoreapp.scanqr.QrScanActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -18,5 +14,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         startActivity(Intent(this, HomeActivity::class.java))
+        finish()
     }
 }

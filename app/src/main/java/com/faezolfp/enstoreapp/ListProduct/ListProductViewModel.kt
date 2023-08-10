@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class ListProductViewModel @Inject constructor(private val useCase: UseCase): ViewModel() {
-    val listProduct = useCase.getListDataProduct()
+class ListProductViewModel @Inject constructor(private val useCase: UseCase) : ViewModel() {
+    fun listProduct(isByCodePeoduct: Boolean, CodeProduct: String?) =
+        useCase.getListDataProduct(isByCodePeoduct, CodeProduct)
 }
