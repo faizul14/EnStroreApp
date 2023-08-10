@@ -71,8 +71,6 @@ class ListProductActivity : AppCompatActivity() {
                     lifecycleScope.launch {
                         viewModel.queryChannel.value = p0.toString()
                     }
-                    Toast.makeText(this@ListProductActivity, p0.toString(), Toast.LENGTH_SHORT)
-                        .show()
                 }
 
                 override fun afterTextChanged(p0: Editable?) {
