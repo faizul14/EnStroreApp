@@ -44,4 +44,12 @@ class ImplUseCase @Inject constructor(private val repository: Repository) : UseC
         repository.deleteProduct(product)
     }
 
+    override fun getGreetingText(): LiveData<String> {
+        return repository.getGreetingText()
+    }
+
+    override suspend fun saveGrettingText(dataGretting: String) {
+        repository.saveGrettingText(dataGretting)
+    }
+
 }

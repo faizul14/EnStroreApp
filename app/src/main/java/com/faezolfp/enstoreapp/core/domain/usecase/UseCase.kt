@@ -14,4 +14,6 @@ interface UseCase {
     fun addProduct(product: ProductModel)
     fun updateProduct(product: ProductModel)
     fun deleteProduct(product: ProductModel)
+    fun getGreetingText(): LiveData<String>
+    suspend fun saveGrettingText(dataGretting: String)
 }

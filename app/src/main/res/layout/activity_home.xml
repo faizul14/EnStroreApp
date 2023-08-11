@@ -61,8 +61,8 @@
         app:layout_constraintTop_toTopOf="@+id/guideline4">
 
         <include
-            layout="@layout/cardviewhome"
-            android:layout_height="wrap_content" />
+            android:id="@+id/include"
+            layout="@layout/cardviewhome"/>
     </LinearLayout>
 
     <LinearLayout

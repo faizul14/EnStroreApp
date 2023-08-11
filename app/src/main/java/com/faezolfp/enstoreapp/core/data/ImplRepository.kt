@@ -46,4 +46,12 @@ class ImplRepository @Inject constructor(private val localDataSource: LocalDataS
         }
     }
 
+    override fun getGreetingText(): LiveData<String> {
+        return localDataSource.getGreetingText()
+    }
+
+    override suspend fun saveGrettingText(dataGretting: String) {
+        localDataSource.saveGrettingText(dataGretting)
+    }
+
 }
