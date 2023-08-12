@@ -31,4 +31,10 @@ class LocalDataSource @Inject constructor(private val enstoreDao: EnstoreDao, pr
     suspend fun saveGrettingText(dataGretting: String){
         preferences.saveGrettingText(dataGretting)
     }
+    fun getIsNIght(): LiveData<Boolean>{
+        return preferences.isNigth().asLiveData()
+    }
+    suspend fun saveIsNigth(isNight: Boolean){
+        preferences.saveIsNight(isNight)
+    }
 }

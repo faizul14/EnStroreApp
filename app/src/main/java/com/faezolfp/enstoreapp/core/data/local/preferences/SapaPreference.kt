@@ -19,44 +19,29 @@ import javax.inject.Singleton
 class Sapareferences @Inject constructor(private val dataStore: DataStore<Preferences>) {
 
     private val GRETTING_TEXT = stringPreferencesKey("gretting_text")
+    private val IS_NIGTH = booleanPreferencesKey("is_night")
 
-    fun getGrettingText(): Flow<String>{
+    fun getGrettingText(): Flow<String> {
         return dataStore.data.map { preferences ->
             preferences[GRETTING_TEXT] ?: "Have Nice Day :)"
         }
     }
 
-    suspend fun saveGrettingText(dataGreeting: String){
-        dataStore.edit { preferences->
+    suspend fun saveGrettingText(dataGreeting: String) {
+        dataStore.edit { preferences ->
             preferences[GRETTING_TEXT] = dataGreeting
         }
     }
 
-    private val IS_LOGIN = booleanPreferencesKey("is_login")
-    private val ID_USER = intPreferencesKey("is_iduser")
-
-    fun getIsLogin(): Flow<Boolean> {
+    fun isNigth(): Flow<Boolean> {
         return dataStore.data.map { preferences ->
-            preferences[IS_LOGIN] ?: false
+            preferences[IS_NIGTH] ?: false
         }
     }
 
-    suspend fun saveIsLogin(dataLogin: Boolean) {
+    suspend fun saveIsNight(isNight: Boolean) {
         dataStore.edit { preferences ->
-            preferences[IS_LOGIN] = dataLogin
+            preferences[IS_NIGTH] = isNight
         }
     }
-
-    suspend fun saveIdUser(idUser: Int) {
-        dataStore.edit { preferences ->
-            preferences[ID_USER] = idUser
-        }
-    }
-
-    fun getIdUser(): Flow<Int> {
-        return dataStore.data.map { preferences ->
-            preferences[ID_USER] ?: 0
-        }
-    }
-
 }

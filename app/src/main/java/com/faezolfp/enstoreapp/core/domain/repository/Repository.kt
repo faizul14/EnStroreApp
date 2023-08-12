@@ -15,4 +15,6 @@ interface Repository {
     fun getDataProductByNameProduct(name: String): LiveData<List<ProductModel>>
     fun getGreetingText(): LiveData<String>
     suspend fun saveGrettingText(dataGretting: String)
+    fun getIsNIght(): LiveData<Boolean>
+    suspend fun saveIsNigth(isNight: Boolean)
 }

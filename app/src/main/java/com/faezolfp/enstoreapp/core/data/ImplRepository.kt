@@ -54,4 +54,12 @@ class ImplRepository @Inject constructor(private val localDataSource: LocalDataS
         localDataSource.saveGrettingText(dataGretting)
     }
 
+    override fun getIsNIght(): LiveData<Boolean> {
+        return localDataSource.getIsNIght()
+    }
+
+    override suspend fun saveIsNigth(isNight: Boolean) {
+        localDataSource.saveIsNigth(isNight)
+    }
+
 }

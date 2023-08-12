@@ -25,13 +25,6 @@ class ImplUseCase @Inject constructor(private val repository: Repository) : UseC
             repository.getListDataProduct()
         }
     }
-
-    //    if (isByCodePeoduct && CodeProduct != null) {
-//        repository.getDataProductByKodeProduct(CodeProduct)
-//    }
-//    else {
-//        repository.getListDataProduct()
-//    }
     override fun addProduct(product: ProductModel) {
         repository.addProduct(product)
     }
@@ -50,6 +43,14 @@ class ImplUseCase @Inject constructor(private val repository: Repository) : UseC
 
     override suspend fun saveGrettingText(dataGretting: String) {
         repository.saveGrettingText(dataGretting)
+    }
+
+    override fun getIsNIght(): LiveData<Boolean> {
+        return repository.getIsNIght()
+    }
+
+    override suspend fun saveIsNigth(isNight: Boolean) {
+        repository.saveIsNigth(isNight)
     }
 
 }

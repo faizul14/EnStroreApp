@@ -2,44 +2,77 @@ package com.faezolfp.enstoreapp.service
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.hilt.work.HiltWorker
-import androidx.work.Worker
+import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.faezolfp.enstoreapp.R
 import com.faezolfp.enstoreapp.core.domain.usecase.UseCase
+import com.faezolfp.enstoreapp.core.utils.NOTIFICATION_CHANNEL_ID
+import com.faezolfp.enstoreapp.core.utils.NOTIFICATION_CHANNEL_NAME
+import com.faezolfp.enstoreapp.core.utils.NOTIFICATION_ID
+import com.faezolfp.enstoreapp.home.HomeActivity
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import java.util.Calendar
 
-class SapaWorker (
-     context: Context,
-     workerParams: WorkerParameters): Worker(context, workerParams) {
-    override fun doWork(): Result {
+@HiltWorker
+class SapaWorker @AssistedInject constructor(
+    @Assisted private val context: Context,
+    @Assisted workerParams: WorkerParameters,
+    private val useCase: UseCase
+) : CoroutineWorker(context, workerParams) {
+
+    override suspend fun doWork(): Result {
         val calendar = Calendar.getInstance()
         val currentHours = calendar.get(Calendar.HOUR_OF_DAY)
 
-        val greeting = if (currentHours in 6 until 18){
-            "Selamat Pagi Faezo"
-        }else{
-            "Selamat Malam Faezol"
+        val greeting = if (currentHours in (6 until 18)) {
+            "Selamat Pagi Faezol Padli"
+        } else {
+            "Selamat Malam Faezol Padli"
         }
-        return Result.success()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            if (currentHours in (6 until 18)) useCase.saveIsNigth(false)
+            else useCase.saveIsNigth(true)
+        }
+
+        return try {
+            showNotifikasi(greeting)
+            CoroutineScope(Dispatchers.IO).launch {
+                useCase.saveGrettingText(greeting)
+            }.join()
+
+            Result.success()
+        } catch (e: Exception) {
+            Result.failure()
+        }
     }
 
-    private fun showNotifikasi(){
-        val notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val notification: NotificationCompat.Builder = NotificationCompat.Builder(applicationContext, "CHANNEL_ID")
-            .setSmallIcon(R.drawable.baseline_notifications_24)
-            .setContentTitle("title")
-            .setContentText("description")
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setDefaults(NotificationCompat.DEFAULT_ALL)
+    private fun showNotifikasi(grettingText: String) {
+
+        val notificationManager =
+            applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notification: NotificationCompat.Builder =
+            NotificationCompat.Builder(applicationContext, "CHANNEL_ID")
+                .setSmallIcon(R.drawable.baseline_notifications_24)
+                .setContentTitle("Hi! Faezol")
+                .setContentText("$grettingText \nHave Nice Day :)")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setDefaults(NotificationCompat.DEFAULT_ALL)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel("CHANNEL_ID", "CHANNEL_NAME", NotificationManager.IMPORTANCE_HIGH)
+            val channel = NotificationChannel(
+                "CHANNEL_ID", "CHANNEL_NAME", NotificationManager.IMPORTANCE_HIGH
+            )
             notification.setChannelId("CHANNEL_ID")
             notificationManager.createNotificationChannel(channel)
         }

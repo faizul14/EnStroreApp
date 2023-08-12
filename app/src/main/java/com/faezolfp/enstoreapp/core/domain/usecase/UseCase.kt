@@ -16,4 +16,6 @@ interface UseCase {
     fun deleteProduct(product: ProductModel)
     fun getGreetingText(): LiveData<String>
     suspend fun saveGrettingText(dataGretting: String)
+    fun getIsNIght(): LiveData<Boolean>
+    suspend fun saveIsNigth(isNight: Boolean)
 }

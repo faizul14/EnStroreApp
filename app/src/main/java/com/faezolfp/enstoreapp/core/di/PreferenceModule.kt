@@ -6,7 +6,6 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.datastore.preferences.preferencesDataStoreFile
-import com.faezolfp.enstoreapp.core.data.local.preferences.dataStore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
