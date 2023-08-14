@@ -16,6 +16,7 @@ import com.faezolfp.enstoreapp.camerax.Cameractivity.Companion.CAMERA_X_RESULT
 import com.faezolfp.enstoreapp.core.domain.model.ProductModel
 import com.faezolfp.enstoreapp.core.utils.DataMapper.rotateFile
 import com.faezolfp.enstoreapp.core.utils.GetDateNow
+import com.faezolfp.enstoreapp.core.utils.ProvideImage
 import com.faezolfp.enstoreapp.databinding.ActivityAddItemBinding
 import com.faezolfp.enstoreapp.scanqr.QrScanActivity
 import com.faezolfp.enstoreapp.scanqr.QrScanActivity.Companion.PRODUCTID_RESULT
@@ -40,6 +41,7 @@ class AddItemActivity : AppCompatActivity(), View.OnClickListener {
     * di gunakan untuk menentukan flow dari activity mana dan menentukan flow selanjutnya
     */
     private var state: Int = 0
+    private lateinit var getDataProduct: ProductModel
     private var idEdit: Int? = null
     private var isEdit: Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,11 +49,12 @@ class AddItemActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(binding.root)
 
         state = intent.getIntExtra(STATE, 0)
-        val getDataProduct = intent.getParcelableExtra<ProductModel>(DATA_PRODUCT) ?: null
+        getDataProduct =
+            (intent.getParcelableExtra<ProductModel>(DATA_PRODUCT) ?: null) as ProductModel
         if (getDataProduct != null) {
             displayEdit(getDataProduct)
             isEdit = true
-            binding.textView10.setText("Edit Item")
+            binding.textView10.text = "Edit Item"
         }
         displayButton()
     }
@@ -62,10 +65,12 @@ class AddItemActivity : AppCompatActivity(), View.OnClickListener {
         binding.btnStartCamera.setOnClickListener(this)
         binding.btnGetkodeproductwithqr.setOnClickListener(this)
         binding.btnCalendar.setOnClickListener(this)
+        binding.btnDelete.setOnClickListener(this)
     }
 
     private fun displayEdit(data: ProductModel) {
         binding.apply {
+            btnDelete.visibility = View.VISIBLE
             idEdit = data.id
             dataPathImgProduct = data.imageProduct
             edtProductName.setText(data.nameProduct)
@@ -74,7 +79,19 @@ class AddItemActivity : AppCompatActivity(), View.OnClickListener {
             edtDateExpired.setText(data.expiredProduct.toString())
             edtPrice.setText(data.priceProduct)
             imgProduct.setImageBitmap(BitmapFactory.decodeFile(data.imageProduct))
-            btnSave.setText("Edit Item")
+            btnSave.text = "Edit Item"
+        }
+    }
+
+    private fun displayDelete(dataProduct: ProductModel) {
+        val dataImage = dataProduct.imageProduct?.let { ProvideImage.deleteImageByPath(it) }
+
+        if (dataImage.equals("Succes")) {
+            viewModel.deleteProduct(dataProduct)
+            Toast.makeText(this, "Item Product Delete Succes!", Toast.LENGTH_SHORT).show()
+            finish()
+        } else {
+            Toast.makeText(this, "Item Product Failed Succes!", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -185,7 +202,16 @@ class AddItemActivity : AppCompatActivity(), View.OnClickListener {
             R.id.btn_calendar -> {
                 datePicker()
             }
+
+            R.id.btn_delete -> {
+                displayDelete(getDataProduct)
+            }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        binding.btnDelete.visibility = View.GONE
     }
 
     //datePicker
