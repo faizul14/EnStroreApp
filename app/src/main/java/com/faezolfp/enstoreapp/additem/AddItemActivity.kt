@@ -8,16 +8,17 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.faezolfp.enstoreapp.R
 import com.faezolfp.enstoreapp.camerax.Cameractivity
 import com.faezolfp.enstoreapp.camerax.Cameractivity.Companion.CAMERA_X_RESULT
 import com.faezolfp.enstoreapp.core.domain.model.ProductModel
 import com.faezolfp.enstoreapp.core.utils.DataMapper.rotateFile
+import com.faezolfp.enstoreapp.core.utils.GetDateNow
 import com.faezolfp.enstoreapp.databinding.ActivityAddItemBinding
 import com.faezolfp.enstoreapp.scanqr.QrScanActivity
 import com.faezolfp.enstoreapp.scanqr.QrScanActivity.Companion.PRODUCTID_RESULT
+import com.google.android.material.datepicker.MaterialDatePicker
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 
@@ -44,6 +45,7 @@ class AddItemActivity : AppCompatActivity(), View.OnClickListener {
         binding.btnSave.setOnClickListener(this)
         binding.btnStartCamera.setOnClickListener(this)
         binding.btnGetkodeproductwithqr.setOnClickListener(this)
+        binding.btnCalendar.setOnClickListener(this)
     }
 
     private fun displaySave() {
@@ -108,8 +110,8 @@ class AddItemActivity : AppCompatActivity(), View.OnClickListener {
 
     private val luncherIntentKodeProduct = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
-    ){
-        if (it.resultCode == PRODUCTID_RESULT){
+    ) {
+        if (it.resultCode == PRODUCTID_RESULT) {
             kodeProduct = @Suppress("DEPRECATION") it.data?.getStringExtra("kodeproduct").toString()
             binding.edtIdProduct.setText(kodeProduct)
         }
@@ -135,12 +137,33 @@ class AddItemActivity : AppCompatActivity(), View.OnClickListener {
                     Toast.makeText(this, "Minilmal isi nama Bos!", Toast.LENGTH_SHORT).show()
                 }
             }
-            R.id.btn_getkodeproductwithqr ->{
+
+            R.id.btn_getkodeproductwithqr -> {
                 val intentResult = Intent(this, QrScanActivity::class.java)
                 luncherIntentKodeProduct.launch(intentResult)
             }
+
+            R.id.btn_calendar -> {
+                datePicker()
+            }
         }
     }
+
+    //datePicker
+    private fun datePicker() {
+        val dpc = MaterialDatePicker.Builder.datePicker()
+            .setTitleText("Selected Expired Date")
+            .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+            .build()
+        with(dpc) {
+            show(supportFragmentManager, "Tag")
+            addOnPositiveButtonClickListener {
+                val date = GetDateNow.formatDate(it)
+                binding.edtDateExpired.setText(date)
+            }
+        }
+    }
+
 
     companion object {
         const val DATA_PRODUCT = "data_product"

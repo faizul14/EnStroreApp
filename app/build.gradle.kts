@@ -79,4 +79,6 @@ dependencies {
     //corountine
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
+    //DatePicker
+    implementation ("com.wdullaer:materialdatetimepicker:4.2.3")
 }
