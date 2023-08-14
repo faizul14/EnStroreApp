@@ -5,6 +5,7 @@ import androidx.room.ColumnInfo
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class ProductModel(
     val id: Int = 0,
     val nameProduct: String? = null,
@@ -13,4 +14,4 @@ data class ProductModel(
     val expiredProduct: String? = null,
     val priceProduct: String? = null,
     val imageProduct: String? = null
-)
+): Parcelable

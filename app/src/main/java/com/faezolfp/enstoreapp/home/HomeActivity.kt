@@ -10,6 +10,7 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.faezolfp.enstoreapp.ListProduct.ListProductActivity
 import com.faezolfp.enstoreapp.R
+import com.faezolfp.enstoreapp.additem.AddItemActivity
 import com.faezolfp.enstoreapp.core.utils.GetDateNow
 import com.faezolfp.enstoreapp.databinding.ActivityHomeBinding
 import com.faezolfp.enstoreapp.scanqr.QrScanActivity
@@ -74,6 +75,11 @@ class HomeActivity : AppCompatActivity() {
             }
             cdSearcproduct.setOnClickListener {
                 startActivity(Intent(this@HomeActivity, ListProductActivity::class.java))
+            }
+            cdAdditem.setOnClickListener {
+                val move = Intent(this@HomeActivity, AddItemActivity::class.java)
+                move.putExtra(AddItemActivity.STATE, 1)
+                startActivity(move)
             }
             btnNotif.setOnClickListener {
                 workManager.enqueue(periodicWork)

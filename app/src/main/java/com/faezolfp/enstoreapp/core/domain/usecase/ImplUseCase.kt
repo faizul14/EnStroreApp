@@ -25,8 +25,12 @@ class ImplUseCase @Inject constructor(private val repository: Repository) : UseC
             repository.getListDataProduct()
         }
     }
-    override fun addProduct(product: ProductModel) {
-        repository.addProduct(product)
+    override fun addProduct(product: ProductModel, isEdit: Boolean) {
+        if (isEdit){
+            repository.updateProduct(product)
+        }else{
+            repository.addProduct(product)
+        }
     }
 
     override fun updateProduct(product: ProductModel) {

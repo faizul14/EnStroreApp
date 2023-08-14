@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.faezolfp.enstoreapp.ListProduct.ListProductActivity
 import com.faezolfp.enstoreapp.R
 import com.faezolfp.enstoreapp.camerax.Cameractivity
 import com.faezolfp.enstoreapp.camerax.Cameractivity.Companion.CAMERA_X_RESULT
@@ -33,10 +34,25 @@ class AddItemActivity : AppCompatActivity(), View.OnClickListener {
     private var dataPathImgProduct: String? = null
     private var kodeProduct: String? = null
     private val viewModel: AddItemViewModel by viewModels()
+
+    /*
+    * state
+    * di gunakan untuk menentukan flow dari activity mana dan menentukan flow selanjutnya
+    */
+    private var state: Int = 0
+    private var idEdit: Int? = null
+    private var isEdit: Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        state = intent.getIntExtra(STATE, 0)
+        val getDataProduct = intent.getParcelableExtra<ProductModel>(DATA_PRODUCT) ?: null
+        if (getDataProduct != null) {
+            displayEdit(getDataProduct)
+            isEdit = true
+            binding.textView10.setText("Edit Item")
+        }
         displayButton()
     }
 
@@ -46,6 +62,20 @@ class AddItemActivity : AppCompatActivity(), View.OnClickListener {
         binding.btnStartCamera.setOnClickListener(this)
         binding.btnGetkodeproductwithqr.setOnClickListener(this)
         binding.btnCalendar.setOnClickListener(this)
+    }
+
+    private fun displayEdit(data: ProductModel) {
+        binding.apply {
+            idEdit = data.id
+            dataPathImgProduct = data.imageProduct
+            edtProductName.setText(data.nameProduct)
+            edtQuantityProduct.setText(data.entityProduct.toString())
+            edtIdProduct.setText(data.kodeProduct.toString())
+            edtDateExpired.setText(data.expiredProduct.toString())
+            edtPrice.setText(data.priceProduct)
+            imgProduct.setImageBitmap(BitmapFactory.decodeFile(data.imageProduct))
+            btnSave.setText("Edit Item")
+        }
     }
 
     private fun displaySave() {
@@ -73,7 +103,7 @@ class AddItemActivity : AppCompatActivity(), View.OnClickListener {
 
         if (nameProduct != null && kodeProduct != null && entityProduct != null && validatePrice) {
             val data = ProductModel(
-                id = 0,
+                id = idEdit ?: 0,
                 nameProduct = nameProduct,
                 kodeProduct = kodeProduct,
                 entityProduct = entityProduct?.toInt(),
@@ -81,9 +111,18 @@ class AddItemActivity : AppCompatActivity(), View.OnClickListener {
                 priceProduct = priceProduct,
                 imageProduct = dataPathImgProduct ?: "path://default"
             )
-            viewModel.saveProduct(data)
+            viewModel.saveProduct(data, isEdit)
             Toast.makeText(this, "Item berhasil di tambahkan!", Toast.LENGTH_SHORT).show()
-            finish()
+            when (state) {
+                0 -> {
+                    finish()
+                }
+
+                else -> {
+                    startActivity(Intent(this@AddItemActivity, ListProductActivity::class.java))
+                    finish()
+                }
+            }
         } else {
             Toast.makeText(this, "minimal isi dulu Bos!", Toast.LENGTH_SHORT).show()
         }
@@ -151,10 +190,8 @@ class AddItemActivity : AppCompatActivity(), View.OnClickListener {
 
     //datePicker
     private fun datePicker() {
-        val dpc = MaterialDatePicker.Builder.datePicker()
-            .setTitleText("Selected Expired Date")
-            .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
-            .build()
+        val dpc = MaterialDatePicker.Builder.datePicker().setTitleText("Selected Expired Date")
+            .setSelection(MaterialDatePicker.todayInUtcMilliseconds()).build()
         with(dpc) {
             show(supportFragmentManager, "Tag")
             addOnPositiveButtonClickListener {
@@ -167,6 +204,6 @@ class AddItemActivity : AppCompatActivity(), View.OnClickListener {
 
     companion object {
         const val DATA_PRODUCT = "data_product"
-        const val STATE = 0
+        const val STATE = "data_state"
     }
 }

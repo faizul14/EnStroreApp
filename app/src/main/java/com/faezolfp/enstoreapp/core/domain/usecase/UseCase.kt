@@ -11,7 +11,7 @@ interface UseCase {
         nameProduct: String?
     ): LiveData<List<ProductModel>>
 
-    fun addProduct(product: ProductModel)
+    fun addProduct(product: ProductModel, isEdit: Boolean)
     fun updateProduct(product: ProductModel)
     fun deleteProduct(product: ProductModel)
     fun getGreetingText(): LiveData<String>

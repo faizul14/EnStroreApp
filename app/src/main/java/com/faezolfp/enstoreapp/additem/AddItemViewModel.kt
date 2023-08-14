@@ -8,5 +8,5 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddItemViewModel @Inject constructor(private val useCase: UseCase): ViewModel() {
-    fun saveProduct(product: ProductModel) = useCase.addProduct(product)
+    fun saveProduct(product: ProductModel, isEdit: Boolean) = useCase.addProduct(product, isEdit)
 }
