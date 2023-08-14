@@ -71,7 +71,9 @@ class HomeActivity : AppCompatActivity() {
     private fun displayBUtton() {
         bindig.apply {
             cdScanner.setOnClickListener {
-                startActivity(Intent(this@HomeActivity, QrScanActivity::class.java))
+                val move = Intent(this@HomeActivity, QrScanActivity::class.java)
+                move.putExtra(QrScanActivity.IS_FOR_SEARCH, true)
+                startActivity(move)
             }
             cdSearcproduct.setOnClickListener {
                 startActivity(Intent(this@HomeActivity, ListProductActivity::class.java))
