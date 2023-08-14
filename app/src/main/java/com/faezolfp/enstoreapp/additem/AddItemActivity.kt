@@ -41,7 +41,7 @@ class AddItemActivity : AppCompatActivity(), View.OnClickListener {
     * di gunakan untuk menentukan flow dari activity mana dan menentukan flow selanjutnya
     */
     private var state: Int = 0
-    private lateinit var getDataProduct: ProductModel
+    private lateinit var getDataProductForDelete: ProductModel
     private var idEdit: Int? = null
     private var isEdit: Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,9 +49,9 @@ class AddItemActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(binding.root)
 
         state = intent.getIntExtra(STATE, 0)
-        getDataProduct =
-            (intent.getParcelableExtra<ProductModel>(DATA_PRODUCT) ?: null) as ProductModel
+        val getDataProduct = intent.getParcelableExtra<ProductModel>(DATA_PRODUCT) ?: null
         if (getDataProduct != null) {
+            getDataProductForDelete = getDataProduct
             displayEdit(getDataProduct)
             isEdit = true
             binding.textView10.text = "Edit Item"
@@ -204,7 +204,7 @@ class AddItemActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             R.id.btn_delete -> {
-                displayDelete(getDataProduct)
+                displayDelete(getDataProductForDelete)
             }
         }
     }
