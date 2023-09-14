@@ -63,6 +63,7 @@ dependencies {
     implementation ("androidx.fragment:fragment-ktx:1.3.4")
     //dataroom
     implementation ("androidx.room:room-runtime:2.5.2")
+    implementation ("androidx.room:room-ktx:2.2.0")
     kapt ("androidx.room:room-compiler:2.5.2")
     //camerax
     implementation ("androidx.camera:camera-camera2:1.2.2")
