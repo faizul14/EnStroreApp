@@ -1,7 +1,9 @@
 package com.faezolfp.enstoreapp.core.domain.usecase
 
 import androidx.lifecycle.LiveData
+import com.faezolfp.enstoreapp.core.data.Resource
 import com.faezolfp.enstoreapp.core.domain.model.ProductModel
+import kotlinx.coroutines.flow.Flow
 
 interface UseCase {
     fun example()
@@ -9,10 +11,10 @@ interface UseCase {
         isByCodePeoduct: Boolean,
         CodeProduct: String?,
         nameProduct: String?
-    ): LiveData<List<ProductModel>>
+    ): Flow<Resource<List<ProductModel>>>
 
-    fun addProduct(product: ProductModel, isEdit: Boolean)
-    fun updateProduct(product: ProductModel)
+    suspend fun addProduct(product: ProductModel, isEdit: Boolean)
+    suspend fun updateProduct(product: ProductModel)
     fun deleteProduct(product: ProductModel)
     fun getGreetingText(): LiveData<String>
     suspend fun saveGrettingText(dataGretting: String)

@@ -1,8 +1,10 @@
 package com.faezolfp.enstoreapp.core.domain.usecase
 
 import androidx.lifecycle.LiveData
+import com.faezolfp.enstoreapp.core.data.Resource
 import com.faezolfp.enstoreapp.core.domain.model.ProductModel
 import com.faezolfp.enstoreapp.core.domain.repository.Repository
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class ImplUseCase @Inject constructor(private val repository: Repository) : UseCase {
@@ -11,29 +13,30 @@ class ImplUseCase @Inject constructor(private val repository: Repository) : UseC
     }
 
     override fun getListDataProduct(
-        isByCodePeoduct: Boolean,
-        CodeProduct: String?,
-        nameProduct: String?
-    ): LiveData<List<ProductModel>> = when {
+        isByCodePeoduct: Boolean, CodeProduct: String?, nameProduct: String?
+    ): Flow<Resource<List<ProductModel>>> = when {
         isByCodePeoduct && CodeProduct != null -> {
             repository.getDataProductByKodeProduct(CodeProduct)
         }
+
         nameProduct != null -> {
             repository.getDataProductByNameProduct(nameProduct)
         }
+
         else -> {
             repository.getListDataProduct()
         }
     }
-    override fun addProduct(product: ProductModel, isEdit: Boolean) {
-        if (isEdit){
+
+    override suspend fun addProduct(product: ProductModel, isEdit: Boolean) {
+        if (isEdit) {
             repository.updateProduct(product)
-        }else{
+        } else {
             repository.addProduct(product)
         }
     }
 
-    override fun updateProduct(product: ProductModel) {
+    override suspend fun updateProduct(product: ProductModel) {
         repository.updateProduct(product)
     }
 

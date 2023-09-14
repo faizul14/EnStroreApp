@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.faezolfp.enstoreapp.additem.AddItemActivity
+import com.faezolfp.enstoreapp.core.data.Resource
 import com.faezolfp.enstoreapp.core.ui.ListProductAdapter
 import com.faezolfp.enstoreapp.databinding.ActivityListProductBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -83,21 +84,60 @@ class ListProductActivity : AppCompatActivity() {
     private fun displayViewList(isByCodePeoduct: Boolean, CodeProduct: String?) {
         binding.rvListProduct.layoutManager = LinearLayoutManager(this)
         viewModel.listProduct(isByCodePeoduct, CodeProduct).observe(this) { dataProduct ->
-            adapter.setListProduct(dataProduct)
-            binding.rvListProduct.adapter = adapter
+            if(dataProduct != null){
+                when(dataProduct){
+                    is Resource.Loading -> {
+
+                    }
+                    is Resource.Success -> {
+                        dataProduct.data?.let { adapter.setListProduct(it) }
+                        binding.rvListProduct.adapter = adapter
+                    }
+                    is Resource.Error -> {
+
+                    }
+                }
+
+            }
+
 
         }
         viewModel.trackTextChange2.observe(this) { trackText ->
             if (!trackText.equals("")) {
                 viewModel.listProduct(false, null, trackText).observe(this) { dataAfterSearch ->
-                    adapter.setListProduct(dataAfterSearch)
-                    binding.rvListProduct.adapter = adapter
+                    if (dataAfterSearch != null){
+                        when(dataAfterSearch){
+                            is Resource.Loading ->{
+
+                            }
+                            is Resource.Success ->{
+                                dataAfterSearch.data?.let { adapter.setListProduct(it) }
+                                binding.rvListProduct.adapter = adapter
+                            }
+                            is Resource.Error ->{
+
+                            }
+
+                        }
+                    }
                 }
             } else {
                 viewModel.listProduct(isByCodePeoduct, CodeProduct).observe(this) { dataProduct ->
-                    adapter.setListProduct(dataProduct)
-                    binding.rvListProduct.adapter = adapter
+                    if (dataProduct != null){
+                        when(dataProduct){
+                            is Resource.Loading -> {
 
+                            }
+                            is Resource.Success -> {
+                                dataProduct.data?.let { adapter.setListProduct(it) }
+                                binding.rvListProduct.adapter = adapter
+                            }
+                            is Resource.Error -> {
+
+                            }
+
+                        }
+                    }
                 }
             }
         }
