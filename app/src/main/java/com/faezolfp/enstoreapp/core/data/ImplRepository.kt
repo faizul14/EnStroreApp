@@ -5,10 +5,7 @@ import com.faezolfp.enstoreapp.core.data.local.LocalDataSource
 import com.faezolfp.enstoreapp.core.domain.model.ProductModel
 import com.faezolfp.enstoreapp.core.domain.repository.Repository
 import com.faezolfp.enstoreapp.core.utils.DataMapper
-import com.faezolfp.enstoreapp.core.utils.GetDataBy
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -20,37 +17,14 @@ class ImplRepository @Inject constructor(private val localDataSource: LocalDataS
         TODO("Not yet implemented")
     }
 
-    private fun loadFromDb(
-        getDataBy: GetDataBy, kode: String = "0", name: String = "name"
-    ): Flow<List<ProductModel>> {
-        return when (getDataBy) {
-            GetDataBy.BYKODE -> {
-                localDataSource.getDataProductByKodeProduct(kode).map {
-                    DataMapper.mapperListFromEntityToModel(it)
-                }
-            }
-
-            GetDataBy.BYNAME -> {
-                localDataSource.getDataProductByNameProduct(name).map {
-                    DataMapper.mapperListFromEntityToModel(it)
-                }
-            }
-
-            else -> {
-                localDataSource.getListDataProduct().map {
-                    DataMapper.mapperListFromEntityToModel(it)
-                }
-            }
-        }
-    }
-
     override fun getListDataProduct(): Flow<Resource<List<ProductModel>>> {
-        val result: Flow<Resource<List<ProductModel>>> = flow {
-            emit(Resource.Loading())
-            val dataFromDb = loadFromDb(GetDataBy.BYNONE)
-            emitAll(dataFromDb.map { Resource.Success(it) })
-        }
-        return result
+        return object : LocalBoundResource<List<ProductModel>>() {
+            override fun loadFromDb(): Flow<List<ProductModel>> {
+                return localDataSource.getListDataProduct().map {
+                    DataMapper.mapperListFromEntityToModel(it)
+                }
+            }
+        }.asFlow()
     }
 
     override suspend fun addProduct(product: ProductModel) {
@@ -66,20 +40,22 @@ class ImplRepository @Inject constructor(private val localDataSource: LocalDataS
     }
 
     override fun getDataProductByKodeProduct(kode: String): Flow<Resource<List<ProductModel>>> =
-        flow {
-            emit(Resource.Loading())
-            emitAll(loadFromDb(GetDataBy.BYKODE, kode = kode).map {
-                Resource.Success(it)
-            })
-        }
+        object : LocalBoundResource<List<ProductModel>>() {
+            override fun loadFromDb(): Flow<List<ProductModel>> {
+                return localDataSource.getDataProductByKodeProduct(kode).map {
+                    DataMapper.mapperListFromEntityToModel(it)
+                }
+            }
+        }.asFlow()
 
     override fun getDataProductByNameProduct(name: String): Flow<Resource<List<ProductModel>>> {
-        return flow {
-            emit(Resource.Loading())
-            emitAll(loadFromDb(GetDataBy.BYNAME, name = name).map {
-                Resource.Success(it)
-            })
-        }
+        return object : LocalBoundResource<List<ProductModel>>() {
+            override fun loadFromDb(): Flow<List<ProductModel>> {
+                return localDataSource.getDataProductByNameProduct(name).map {
+                    DataMapper.mapperListFromEntityToModel(it)
+                }
+            }
+        }.asFlow()
     }
 
 
