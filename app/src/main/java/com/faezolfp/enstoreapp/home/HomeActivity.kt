@@ -1,8 +1,10 @@
 package com.faezolfp.enstoreapp.home
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.work.PeriodicWorkRequest
@@ -24,6 +26,8 @@ class HomeActivity : AppCompatActivity() {
     private val viewModel: HomeViewModel by viewModels()
     private lateinit var workManager: WorkManager
     private lateinit var periodicWork: PeriodicWorkRequest
+    private var onEnqueue: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(bindig.root)
@@ -32,18 +36,15 @@ class HomeActivity : AppCompatActivity() {
         displayBUtton()
         workManager = WorkManager.getInstance(this)
         priodicWorkManager()
-        workManager.getWorkInfoByIdLiveData(periodicWork.id)
-            .observe(this@HomeActivity) { workInfo ->
-                if (workInfo.state != WorkInfo.State.ENQUEUED) {
-                    bindig.btnNotif.isEnabled = true
-                    workManager.enqueue(periodicWork)
-                } else {
-                    bindig.btnNotif.visibility = View.GONE
-                    workManager.cancelWorkById(periodicWork.id)
-                }
-            }
+        observeWorkManager()
     }
 
+    override fun onResume() {
+        super.onResume()
+//        observeWorkManager()
+//        Log.d("QUEQUE", "VALUE QUEUE $onEnqueue")
+    }
+    @SuppressLint("UseCompatLoadingForDrawables")
     private fun observerViewModel() {
         viewModel.getIsNight.observe(this) { isNight ->
             viewModel.getGrettingText.observe(this) { dataGretting ->
@@ -84,13 +85,55 @@ class HomeActivity : AppCompatActivity() {
                 startActivity(move)
             }
             btnNotif.setOnClickListener {
-                workManager.enqueue(periodicWork)
+//                workManager.enqueue(periodicWork)
+//                cancelOrNotWorkManager()
+                observeWorkManager()
             }
         }
     }
 
+    @SuppressLint("InvalidPeriodicWorkRequestInterval")
     private fun priodicWorkManager() {
         periodicWork =
-            PeriodicWorkRequest.Builder(SapaWorker::class.java, 15, TimeUnit.MINUTES).build()
+            PeriodicWorkRequest.Builder(SapaWorker::class.java, 15, TimeUnit.MILLISECONDS).build()
+    }
+
+    private fun observeWorkManager() {
+        workManager.getWorkInfoByIdLiveData(periodicWork.id)
+            .observe(this@HomeActivity) { workInfo ->
+                if (workInfo.state != WorkInfo.State.ENQUEUED) {
+                    onEnqueue = false
+//                    bindig.btnNotif.setImageDrawable(resources.getDrawable(R.drawable.baseline_notifications_24))
+                    Log.d("QUEQUE", "STATE WORKMANAGER ${workInfo.id} ${workInfo.state}")
+                    Log.d("QUEQUE", "VALUE QUEUE2 $onEnqueue")
+                    cancelOrNotWorkManager()
+//                    bindig.btnNotif.isEnabled = true
+//                    workManager.enqueue(periodicWork)
+                } else {
+                    onEnqueue = true
+//                    bindig.btnNotif.setImageDrawable(resources.getDrawable(R.drawable.baseline_notifications_active_24))
+                    Log.d("QUEQUE", "STATE WORKMANAGER ${workInfo.id} ${workInfo.state}")
+                    Log.d("QUEQUE", "VALUE QUEUE2 $onEnqueue")
+                    cancelOrNotWorkManager()
+//                    workManager.cancelWorkById(periodicWork.id)
+                }
+            }
+        Log.d("QUEQUE", "VALUE QUEUE1 $onEnqueue")
+    }
+
+    private fun cancelOrNotWorkManager() {
+        if (onEnqueue) {
+            workManager.cancelWorkById(periodicWork.id)
+//            onEnqueue = false
+            bindig.btnNotif.setImageDrawable(resources.getDrawable(R.drawable.baseline_notifications_24))
+            observeWorkManager()
+        } else {
+            workManager.enqueue(
+                periodicWork
+            )
+//            onEnqueue = true
+            bindig.btnNotif.setImageDrawable(resources.getDrawable(R.drawable.baseline_notifications_active_24))
+            observeWorkManager()
+        }
     }
 }

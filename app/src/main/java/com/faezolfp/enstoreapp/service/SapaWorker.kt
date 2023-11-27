@@ -2,25 +2,19 @@ package com.faezolfp.enstoreapp.service
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.faezolfp.enstoreapp.R
 import com.faezolfp.enstoreapp.core.domain.usecase.UseCase
-import com.faezolfp.enstoreapp.core.utils.NOTIFICATION_CHANNEL_ID
-import com.faezolfp.enstoreapp.core.utils.NOTIFICATION_CHANNEL_NAME
-import com.faezolfp.enstoreapp.core.utils.NOTIFICATION_ID
-import com.faezolfp.enstoreapp.home.HomeActivity
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
@@ -47,6 +41,7 @@ class SapaWorker @AssistedInject constructor(
         }
 
         return try {
+            Log.d("TRACKER", "WORKMANAGER DI JALANKER")
             showNotifikasi(greeting)
             CoroutineScope(Dispatchers.IO).launch {
                 useCase.saveGrettingText(greeting)
@@ -59,6 +54,7 @@ class SapaWorker @AssistedInject constructor(
     }
 
     private fun showNotifikasi(grettingText: String) {
+        Log.d("TRACKER", "NOTIFIKASI DI JALANKER")
 
         val notificationManager =
             applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

@@ -13,7 +13,8 @@ import javax.inject.Singleton
 
 @Singleton
 class LocalDataSource @Inject constructor(
-    private val enstoreDao: EnstoreDao, private val preferences: Sapareferences
+    private val enstoreDao: EnstoreDao,
+    private val preferences: Sapareferences
 ) {
     private val executorService: ExecutorService = Executors.newSingleThreadExecutor()
     fun getListDataProduct(): Flow<List<ProductEntity>> = enstoreDao.getListProduct()
